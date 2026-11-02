@@ -2,6 +2,8 @@ name: Build APK
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +20,6 @@ jobs:
         with:
           gradle-version: 8.7
       - run: gradle assembleDebug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: VoiceAssistant-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+      - run: gh release create v${{ github.run_number }} app/build/outputs/apk/debug/app-debug.apk --title "APK ${{ github.run_number }}" --notes "Voice assistant"
+        env:
+          GH_TOKEN: ${{ github.token }}
